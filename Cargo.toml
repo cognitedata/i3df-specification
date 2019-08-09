@@ -1,0 +1,8 @@
+[package]
+name = "i3df-specification"
+version = "0.1.0"
+authors = ["Fredrik Østrem <fredrik.ostrem@cognite.com>", "Svenn-Arne Dragly <dragly@cognite.com>"]
+edition = "2018"
+publish = false
+
+[dependencies]
