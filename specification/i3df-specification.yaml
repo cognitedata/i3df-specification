@@ -1,0 +1,1019 @@
+# Brief spec description:
+#
+#   versions:                   # list of defined versions
+#   -
+#     version: 4                # version number
+#     deprecated: false         # if true, the version is deprecated and should not be used anymore (and does not need
+#                               #   to be accepted by parsers)
+#   attributes:
+#   -
+#     name: some_attribute      # attribute name
+#     type: u32                 # attribute type, primitive type (must be one of: u8, u16, u32, u64, i8, i16, i32, i64, f32, f64)
+#     min_version: 0            # minimum version (inclusive) of the format where this field exists (default: 0)
+#     max_version: 10           # maximum version (inclusive) of the format where this field exists (default: MAX)
+#   -
+#     name: complex_attribute
+#     type:                     # complex type, as a packed struct. all inner fields must have primitive type.
+#       foo:
+#         type: u32
+#       bar:
+#         type: u32
+#
+#   geometry_types:
+#     127:                           # geometry type ID (must be between 0 and 255)
+#       name:                        # geometry type name
+#       indices:                     # list of indices for geometry type
+#       -
+#         name: some_index           # index name
+#         attribute: some_attribute  # associated attribute (may be null, in which case the "index" should be interpreted directly as an u32)
+#         zero_is_none: false        # if true, then 0 is "no value", non-zero must be subtracted one to get the true index in the attribute list (default: false)
+
+versions:
+- version: 4
+- version: 5
+- version: 6
+  deprecated: true
+- version: 7
+
+attributes:
+- name: color
+  type: u8
+  count: 4
+- name: diagonal
+  attribute: diagonal
+  type: f32
+  min_version: 5
+- name: center_x
+  type: f32
+- name: center_y
+  type: f32
+- name: center_z
+  type: f32
+- name: normal
+  type: f32
+  count: 3
+- name: delta
+  type: f32
+- name: height
+  type: f32
+- name: radius
+  type: f32
+- name: angle
+  type: f32
+- name: translation_x
+  type: f32
+- name: translation_y
+  type: f32
+- name: translation_z
+  type: f32
+- name: scale_x
+  type: f32
+- name: scale_y
+  type: f32
+- name: scale_z
+  type: f32
+- name: file_id
+  type: u64
+- name: texture
+  type:
+    file_id:
+      type: u64
+    width:
+      type: u16
+    height:
+      type: u16
+    _reserved:
+      type: u32
+  min_version: 6
+
+geometry_types:
+  '1':
+    name: box
+    indices:
+    - name: tree_index
+      attribute: null
+    - name: color
+      attribute: color
+      zero_is_none: true
+    - name: diagonal
+      attribute: diagonal
+      min_version: 5
+    - name: center_x
+      attribute: center_x
+    - name: center_y
+      attribute: center_y
+    - name: center_z
+      attribute: center_z
+    - name: normal
+      attribute: normal
+    - name: delta_x
+      attribute: delta
+    - name: delta_y
+      attribute: delta
+    - name: delta_z
+      attribute: delta
+    - name: rotation_angle
+      attribute: angle
+  '2':
+    name: circle
+    indices:
+    - name: tree_index
+      attribute: null
+    - name: color
+      attribute: color
+      zero_is_none: true
+    - name: diagonal
+      attribute: diagonal
+      min_version: 5
+    - name: center_x
+      attribute: center_x
+    - name: center_y
+      attribute: center_y
+    - name: center_z
+      attribute: center_z
+    - name: normal
+      attribute: normal
+    - name: radius
+      attribute: radius
+  '3':
+    name: closed_cone
+    indices:
+    - name: tree_index
+      attribute: null
+    - name: color
+      attribute: color
+      zero_is_none: true
+    - name: diagonal
+      attribute: diagonal
+      min_version: 5
+    - name: center_x
+      attribute: center_x
+    - name: center_y
+      attribute: center_y
+    - name: center_z
+      attribute: center_z
+    - name: center_axis
+      attribute: normal
+    - name: height
+      attribute: height
+    - name: radius_a
+      attribute: radius
+    - name: radius_b
+      attribute: radius
+  '4':
+    name: closed_cylinder
+    indices:
+    - name: tree_index
+      attribute: null
+    - name: color
+      attribute: color
+      zero_is_none: true
+    - name: diagonal
+      attribute: diagonal
+      min_version: 5
+    - name: center_x
+      attribute: center_x
+    - name: center_y
+      attribute: center_y
+    - name: center_z
+      attribute: center_z
+    - name: center_axis
+      attribute: normal
+    - name: height
+      attribute: height
+    - name: radius
+      attribute: radius
+  '5':
+    name: closed_eccentric_cone
+    indices:
+    - name: tree_index
+      attribute: null
+    - name: color
+      attribute: color
+      zero_is_none: true
+    - name: diagonal
+      attribute: diagonal
+      min_version: 5
+    - name: center_x
+      attribute: center_x
+    - name: center_y
+      attribute: center_y
+    - name: center_z
+      attribute: center_z
+    - name: center_axis
+      attribute: normal
+    - name: height
+      attribute: height
+    - name: radius_a
+      attribute: radius
+    - name: radius_b
+      attribute: radius
+    - name: cap_normal
+      attribute: normal
+  '6':
+    name: closed_ellipsoid_segment
+    indices:
+    - name: tree_index
+      attribute: null
+    - name: color
+      attribute: color
+      zero_is_none: true
+    - name: diagonal
+      attribute: diagonal
+      min_version: 5
+    - name: center_x
+      attribute: center_x
+    - name: center_y
+      attribute: center_y
+    - name: center_z
+      attribute: center_z
+    - name: normal
+      attribute: normal
+    - name: height
+      attribute: height
+    - name: horizontal_radius
+      attribute: radius
+    - name: vertical_radius
+      attribute: radius
+  '7':
+    name: closed_extruded_ring_segment
+    indices:
+    - name: tree_index
+      attribute: null
+    - name: color
+      attribute: color
+      zero_is_none: true
+    - name: diagonal
+      attribute: diagonal
+      min_version: 5
+    - name: center_x
+      attribute: center_x
+    - name: center_y
+      attribute: center_y
+    - name: center_z
+      attribute: center_z
+    - name: center_axis
+      attribute: normal
+    - name: height
+      attribute: height
+    - name: inner_radius
+      attribute: radius
+    - name: outer_radius
+      attribute: radius
+    - name: rotation_angle
+      attribute: angle
+    - name: arc_angle
+      attribute: angle
+  '9':
+    name: closed_spherical_segment
+    indices:
+    - name: tree_index
+      attribute: null
+    - name: color
+      attribute: color
+      zero_is_none: true
+    - name: diagonal
+      attribute: diagonal
+      min_version: 5
+    - name: center_x
+      attribute: center_x
+    - name: center_y
+      attribute: center_y
+    - name: center_z
+      attribute: center_z
+    - name: normal
+      attribute: normal
+    - name: height
+      attribute: height
+    - name: radius
+      attribute: radius
+  '10':
+    name: closed_torus_segment
+    indices:
+    - name: tree_index
+      attribute: null
+    - name: color
+      attribute: color
+      zero_is_none: true
+    - name: diagonal
+      attribute: diagonal
+      min_version: 5
+    - name: center_x
+      attribute: center_x
+    - name: center_y
+      attribute: center_y
+    - name: center_z
+      attribute: center_z
+    - name: normal
+      attribute: normal
+    - name: radius
+      attribute: radius
+    - name: tube_radius
+      attribute: radius
+    - name: rotation_angle
+      attribute: angle
+    - name: arc_angle
+      attribute: angle
+  '11':
+    name: ellipsoid
+    indices:
+    - name: tree_index
+      attribute: null
+    - name: color
+      attribute: color
+      zero_is_none: true
+    - name: diagonal
+      attribute: diagonal
+      min_version: 5
+    - name: center_x
+      attribute: center_x
+    - name: center_y
+      attribute: center_y
+    - name: center_z
+      attribute: center_z
+    - name: normal
+      attribute: normal
+    - name: horizontal_radius
+      attribute: radius
+    - name: vertical_radius
+      attribute: radius
+  '12':
+    name: extruded_ring
+    indices:
+    - name: tree_index
+      attribute: null
+    - name: color
+      attribute: color
+      zero_is_none: true
+    - name: diagonal
+      attribute: diagonal
+      min_version: 5
+    - name: center_x
+      attribute: center_x
+    - name: center_y
+      attribute: center_y
+    - name: center_z
+      attribute: center_z
+    - name: center_axis
+      attribute: normal
+    - name: height
+      attribute: height
+    - name: inner_radius
+      attribute: radius
+    - name: outer_radius
+      attribute: radius
+  '13':
+    name: nut
+    indices:
+    - name: tree_index
+      attribute: null
+    - name: color
+      attribute: color
+      zero_is_none: true
+    - name: diagonal
+      attribute: diagonal
+      min_version: 5
+    - name: center_x
+      attribute: center_x
+    - name: center_y
+      attribute: center_y
+    - name: center_z
+      attribute: center_z
+    - name: center_axis
+      attribute: normal
+    - name: height
+      attribute: height
+    - name: radius
+      attribute: radius
+    - name: rotation_angle
+      attribute: angle
+  '14':
+    name: open_cone
+    indices:
+    - name: tree_index
+      attribute: null
+    - name: color
+      attribute: color
+      zero_is_none: true
+    - name: diagonal
+      attribute: diagonal
+      min_version: 5
+    - name: center_x
+      attribute: center_x
+    - name: center_y
+      attribute: center_y
+    - name: center_z
+      attribute: center_z
+    - name: center_axis
+      attribute: normal
+    - name: height
+      attribute: height
+    - name: radius_a
+      attribute: radius
+    - name: radius_b
+      attribute: radius
+  '15':
+    name: open_cylinder
+    indices:
+    - name: tree_index
+      attribute: null
+    - name: color
+      attribute: color
+      zero_is_none: true
+    - name: diagonal
+      attribute: diagonal
+      min_version: 5
+    - name: center_x
+      attribute: center_x
+    - name: center_y
+      attribute: center_y
+    - name: center_z
+      attribute: center_z
+    - name: center_axis
+      attribute: normal
+    - name: height
+      attribute: height
+    - name: radius
+      attribute: radius
+  '16':
+    name: open_eccentric_cone
+    indices:
+    - name: tree_index
+      attribute: null
+    - name: color
+      attribute: color
+      zero_is_none: true
+    - name: diagonal
+      attribute: diagonal
+      min_version: 5
+    - name: center_x
+      attribute: center_x
+    - name: center_y
+      attribute: center_y
+    - name: center_z
+      attribute: center_z
+    - name: center_axis
+      attribute: normal
+    - name: height
+      attribute: height
+    - name: radius_a
+      attribute: radius
+    - name: radius_b
+      attribute: radius
+    - name: cap_normal
+      attribute: normal
+  '17':
+    name: open_ellipsoid_segment
+    indices:
+    - name: tree_index
+      attribute: null
+    - name: color
+      attribute: color
+      zero_is_none: true
+    - name: diagonal
+      attribute: diagonal
+      min_version: 5
+    - name: center_x
+      attribute: center_x
+    - name: center_y
+      attribute: center_y
+    - name: center_z
+      attribute: center_z
+    - name: normal
+      attribute: normal
+    - name: height
+      attribute: height
+    - name: horizontal_radius
+      attribute: radius
+    - name: vertical_radius
+      attribute: radius
+  '18':
+    name: open_extruded_ring_segment
+    indices:
+    - name: tree_index
+      attribute: null
+    - name: color
+      attribute: color
+      zero_is_none: true
+    - name: diagonal
+      attribute: diagonal
+      min_version: 5
+    - name: center_x
+      attribute: center_x
+    - name: center_y
+      attribute: center_y
+    - name: center_z
+      attribute: center_z
+    - name: center_axis
+      attribute: normal
+    - name: height
+      attribute: height
+    - name: inner_radius
+      attribute: radius
+    - name: outer_radius
+      attribute: radius
+    - name: rotation_angle
+      attribute: angle
+    - name: arc_angle
+      attribute: angle
+  '20':
+    name: open_spherical_segment
+    indices:
+    - name: tree_index
+      attribute: null
+    - name: color
+      attribute: color
+      zero_is_none: true
+    - name: diagonal
+      attribute: diagonal
+      min_version: 5
+    - name: center_x
+      attribute: center_x
+    - name: center_y
+      attribute: center_y
+    - name: center_z
+      attribute: center_z
+    - name: normal
+      attribute: normal
+    - name: height
+      attribute: height
+    - name: radius
+      attribute: radius
+  '21':
+    name: open_torus_segment
+    indices:
+    - name: tree_index
+      attribute: null
+    - name: color
+      attribute: color
+      zero_is_none: true
+    - name: diagonal
+      attribute: diagonal
+      min_version: 5
+    - name: center_x
+      attribute: center_x
+    - name: center_y
+      attribute: center_y
+    - name: center_z
+      attribute: center_z
+    - name: normal
+      attribute: normal
+    - name: radius
+      attribute: radius
+    - name: tube_radius
+      attribute: radius
+    - name: rotation_angle
+      attribute: angle
+    - name: arc_angle
+      attribute: angle
+  '22':
+    name: ring
+    indices:
+    - name: tree_index
+      attribute: null
+    - name: color
+      attribute: color
+      zero_is_none: true
+    - name: diagonal
+      attribute: diagonal
+      min_version: 5
+    - name: center_x
+      attribute: center_x
+    - name: center_y
+      attribute: center_y
+    - name: center_z
+      attribute: center_z
+    - name: normal
+      attribute: normal
+    - name: inner_radius
+      attribute: radius
+    - name: outer_radius
+      attribute: radius
+  '23':
+    name: sphere
+    indices:
+    - name: tree_index
+      attribute: null
+    - name: color
+      attribute: color
+      zero_is_none: true
+    - name: diagonal
+      attribute: diagonal
+      min_version: 5
+    - name: center_x
+      attribute: center_x
+    - name: center_y
+      attribute: center_y
+    - name: center_z
+      attribute: center_z
+    - name: radius
+      attribute: radius
+  '24':
+    name: torus
+    indices:
+    - name: tree_index
+      attribute: null
+    - name: color
+      attribute: color
+      zero_is_none: true
+    - name: diagonal
+      attribute: diagonal
+      min_version: 5
+    - name: center_x
+      attribute: center_x
+    - name: center_y
+      attribute: center_y
+    - name: center_z
+      attribute: center_z
+    - name: normal
+      attribute: normal
+    - name: radius
+      attribute: radius
+    - name: tube_radius
+      attribute: radius
+  '30':
+    name: open_general_cylinder
+    indices:
+    - name: tree_index
+      attribute: null
+    - name: color
+      attribute: color
+      zero_is_none: true
+    - name: diagonal
+      attribute: diagonal
+      min_version: 5
+    - name: center_x
+      attribute: center_x
+    - name: center_y
+      attribute: center_y
+    - name: center_z
+      attribute: center_z
+    - name: center_axis
+      attribute: normal
+    - name: height
+      attribute: height
+    - name: radius
+      attribute: radius
+    - name: rotation_angle
+      attribute: angle
+    - name: arc_angle
+      attribute: angle
+    - name: slope_a
+      attribute: angle
+    - name: slope_b
+      attribute: angle
+    - name: zangle_a
+      attribute: angle
+    - name: zangle_b
+      attribute: angle
+  '31':
+    name: closed_general_cylinder
+    indices:
+    - name: tree_index
+      attribute: null
+    - name: color
+      attribute: color
+      zero_is_none: true
+    - name: diagonal
+      attribute: diagonal
+      min_version: 5
+    - name: center_x
+      attribute: center_x
+    - name: center_y
+      attribute: center_y
+    - name: center_z
+      attribute: center_z
+    - name: center_axis
+      attribute: normal
+    - name: height
+      attribute: height
+    - name: radius
+      attribute: radius
+    - name: rotation_angle
+      attribute: angle
+    - name: arc_angle
+      attribute: angle
+    - name: slope_a
+      attribute: angle
+    - name: slope_b
+      attribute: angle
+    - name: zangle_a
+      attribute: angle
+    - name: zangle_b
+      attribute: angle
+  '32':
+    name: solid_open_general_cylinder
+    indices:
+    - name: tree_index
+      attribute: null
+    - name: color
+      attribute: color
+      zero_is_none: true
+    - name: diagonal
+      attribute: diagonal
+      min_version: 5
+    - name: center_x
+      attribute: center_x
+    - name: center_y
+      attribute: center_y
+    - name: center_z
+      attribute: center_z
+    - name: center_axis
+      attribute: normal
+    - name: height
+      attribute: height
+    - name: radius
+      attribute: radius
+    - name: thickness
+      attribute: radius
+    - name: rotation_angle
+      attribute: angle
+    - name: arc_angle
+      attribute: angle
+    - name: slope_a
+      attribute: angle
+    - name: slope_b
+      attribute: angle
+    - name: zangle_a
+      attribute: angle
+    - name: zangle_b
+      attribute: angle
+  '33':
+    name: solid_closed_general_cylinder
+    indices:
+    - name: tree_index
+      attribute: null
+    - name: color
+      attribute: color
+      zero_is_none: true
+    - name: diagonal
+      attribute: diagonal
+      min_version: 5
+    - name: center_x
+      attribute: center_x
+    - name: center_y
+      attribute: center_y
+    - name: center_z
+      attribute: center_z
+    - name: center_axis
+      attribute: normal
+    - name: height
+      attribute: height
+    - name: radius
+      attribute: radius
+    - name: thickness
+      attribute: radius
+    - name: rotation_angle
+      attribute: angle
+    - name: arc_angle
+      attribute: angle
+    - name: slope_a
+      attribute: angle
+    - name: slope_b
+      attribute: angle
+    - name: zangle_a
+      attribute: angle
+    - name: zangle_b
+      attribute: angle
+  '34':
+    name: open_general_cone
+    indices:
+    - name: tree_index
+      attribute: null
+    - name: color
+      attribute: color
+      zero_is_none: true
+    - name: diagonal
+      attribute: diagonal
+      min_version: 5
+    - name: center_x
+      attribute: center_x
+    - name: center_y
+      attribute: center_y
+    - name: center_z
+      attribute: center_z
+    - name: center_axis
+      attribute: normal
+    - name: height
+      attribute: height
+    - name: radius_a
+      attribute: radius
+    - name: radius_b
+      attribute: radius
+    - name: rotation_angle
+      attribute: angle
+    - name: arc_angle
+      attribute: angle
+    - name: slope_a
+      attribute: angle
+    - name: slope_b
+      attribute: angle
+    - name: zangle_a
+      attribute: angle
+    - name: zangle_b
+      attribute: angle
+  '35':
+    name: closed_general_cone
+    indices:
+    - name: tree_index
+      attribute: null
+    - name: color
+      attribute: color
+      zero_is_none: true
+    - name: diagonal
+      attribute: diagonal
+      min_version: 5
+    - name: center_x
+      attribute: center_x
+    - name: center_y
+      attribute: center_y
+    - name: center_z
+      attribute: center_z
+    - name: center_axis
+      attribute: normal
+    - name: height
+      attribute: height
+    - name: radius_a
+      attribute: radius
+    - name: radius_b
+      attribute: radius
+    - name: rotation_angle
+      attribute: angle
+    - name: arc_angle
+      attribute: angle
+    - name: slope_a
+      attribute: angle
+    - name: slope_b
+      attribute: angle
+    - name: zangle_a
+      attribute: angle
+    - name: zangle_b
+      attribute: angle
+  '36':
+    name: solid_open_general_cone
+    indices:
+    - name: tree_index
+      attribute: null
+    - name: color
+      attribute: color
+      zero_is_none: true
+    - name: diagonal
+      attribute: diagonal
+      min_version: 5
+    - name: center_x
+      attribute: center_x
+    - name: center_y
+      attribute: center_y
+    - name: center_z
+      attribute: center_z
+    - name: center_axis
+      attribute: normal
+    - name: height
+      attribute: height
+    - name: radius_a
+      attribute: radius
+    - name: radius_b
+      attribute: radius
+    - name: thickness
+      attribute: radius
+    - name: rotation_angle
+      attribute: angle
+    - name: arc_angle
+      attribute: angle
+    - name: slope_a
+      attribute: angle
+    - name: slope_b
+      attribute: angle
+    - name: zangle_a
+      attribute: angle
+    - name: zangle_b
+      attribute: angle
+  '37':
+    name: solid_closed_general_cone
+    indices:
+    - name: tree_index
+      attribute: null
+    - name: color
+      attribute: color
+      zero_is_none: true
+    - name: diagonal
+      attribute: diagonal
+      min_version: 5
+    - name: center_x
+      attribute: center_x
+    - name: center_y
+      attribute: center_y
+    - name: center_z
+      attribute: center_z
+    - name: center_axis
+      attribute: normal
+    - name: height
+      attribute: height
+    - name: radius_a
+      attribute: radius
+    - name: radius_b
+      attribute: radius
+    - name: thickness
+      attribute: radius
+    - name: rotation_angle
+      attribute: angle
+    - name: arc_angle
+      attribute: angle
+    - name: slope_a
+      attribute: angle
+    - name: slope_b
+      attribute: angle
+    - name: zangle_a
+      attribute: angle
+    - name: zangle_b
+      attribute: angle
+  '100':
+    name: triangle_mesh
+    indices:
+    - name: tree_index
+      attribute: null
+    - name: file_id
+      attribute: file_id
+    - name: diffuse_texture
+      attribute: texture
+      zero_is_none: true
+      min_version: 6
+    - name: specular_texture
+      attribute: texture
+      zero_is_none: true
+      min_version: 7
+    - name: ambient_texture
+      attribute: texture
+      zero_is_none: true
+      min_version: 7
+    - name: normal_texture
+      attribute: texture
+      zero_is_none: true
+      min_version: 6
+    - name: bump_texture
+      attribute: texture
+      zero_is_none: true
+      min_version: 6
+    - name: triangle_count
+      attribute: null
+    - name: color
+      attribute: color
+      zero_is_none: true
+    - name: diagonal
+      attribute: diagonal
+      min_version: 5
+  '101':
+    name: instanced_mesh
+    indices:
+    - name: tree_index
+      attribute: null
+    - name: file_id
+      attribute: file_id
+    - name: diffuse_texture
+      attribute: texture
+      zero_is_none: true
+      min_version: 6
+    - name: specular_texture
+      attribute: texture
+      zero_is_none: true
+      min_version: 7
+    - name: ambient_texture
+      attribute: texture
+      zero_is_none: true
+      min_version: 7
+    - name: normal_texture
+      attribute: texture
+      zero_is_none: true
+      min_version: 6
+    - name: bump_texture
+      attribute: texture
+      zero_is_none: true
+      min_version: 6
+    - name: triangle_offset
+      attribute: null
+    - name: triangle_count
+      attribute: null
+    - name: color
+      attribute: color
+      zero_is_none: true
+    - name: diagonal
+      attribute: diagonal
+      min_version: 5
+    - name: translation_x
+      attribute: translation_x
+    - name: translation_y
+      attribute: translation_y
+    - name: translation_z
+      attribute: translation_z
+    - name: rotation_x
+      attribute: angle
+    - name: rotation_y
+      attribute: angle
+    - name: rotation_z
+      attribute: angle
+    - name: scale_x
+      attribute: scale_x
+    - name: scale_y
+      attribute: scale_y
+    - name: scale_z
+      attribute: scale_z
